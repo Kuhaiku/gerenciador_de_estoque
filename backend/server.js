@@ -74,19 +74,23 @@ app.get('/api/sales', async (req, res) => {
     res.json(sales);
 });
 
+// ALTERAÇÃO AQUI: Recebe e valida o nome do cliente
 app.post('/api/sales', async (req, res) => {
-    const { items: saleItems, totalValue, totalPieces } = req.body;
-    if (!saleItems || totalValue === undefined || totalPieces === undefined) {
-        return res.status(400).json({ message: 'Dados da venda incompletos.' });
+    const { items: saleItems, totalValue, totalPieces, clientName } = req.body;
+    if (!saleItems || totalValue === undefined || totalPieces === undefined || !clientName) {
+        return res.status(400).json({ message: 'Dados da venda incompletos. Nome do cliente é obrigatório.' });
     }
+
     const sales = await readData(SALES_FILE);
     const newSale = {
         id: Date.now(),
         date: new Date().toISOString(),
+        clientName: clientName, // Salva o nome do cliente
         items: saleItems,
         totalValue,
         totalPieces
     };
+
     sales.push(newSale);
     await writeData(SALES_FILE, sales);
     res.status(201).json(newSale);
@@ -100,8 +104,8 @@ app.delete('/api/sales', async (req, res) => {
     }
 
     try {
-        await writeData(SALES_FILE, []); // Escreve um array vazio no arquivo de vendas
-        res.status(204).send(); // Sucesso, sem conteúdo para retornar
+        await writeData(SALES_FILE, []);
+        res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: 'Erro ao limpar o histórico de vendas.' });
     }

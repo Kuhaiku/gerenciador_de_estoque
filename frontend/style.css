@@ -36,6 +36,12 @@ h1 {
     font-size: 2.5em;
 }
 
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+
 input[type="text"],
 input[type="number"],
 select {
@@ -175,7 +181,42 @@ td input {
     overflow: hidden;
 }
 
-.sale-card-header, .sale-card-footer {
+/* ALTERAÇÃO AQUI: Ajustes no cabeçalho do card para o nome do cliente */
+.sale-card-header {
+    background-color: #f2f2f2;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Alinhado ao topo para nomes grandes */
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.sale-card-header .info-venda {
+    display: flex;
+    flex-direction: column;
+}
+
+.sale-card-header .info-venda .client-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #000;
+}
+
+.sale-card-header .info-venda .sale-id {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.sale-card-header .sale-date {
+    font-size: 0.9em;
+    color: #333;
+    white-space: nowrap;
+    align-self: center;
+}
+
+.sale-card-footer {
     background-color: #f2f2f2;
     padding: 10px 15px;
     display: flex;
@@ -183,13 +224,6 @@ td input {
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-}
-
-.sale-card-header {
-    border-bottom: 1px solid #ddd;
-}
-
-.sale-card-footer {
     border-top: 1px solid #ddd;
     font-size: 0.9em;
 }
@@ -238,7 +272,6 @@ td input {
         min-width: auto;
     }
 
-    /* Transforma a tabela em "cartões" */
     table, thead, tbody, th, td, tr {
         display: block;
     }

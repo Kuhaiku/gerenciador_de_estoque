@@ -42,6 +42,8 @@
         <div class="section">
             <h2>🧾 Nova Venda</h2>
             <form id="new-sale-form">
+                 <input type="text" id="client-name" placeholder="Nome do Cliente" required>
+                 <hr>
                  <div id="sale-items-container">
                     </div>
                  <button type="button" id="add-item-to-sale-btn">Adicionar Item à Venda</button>
@@ -61,7 +63,7 @@
         <h2>📊 Histórico e Total de Vendas</h2>
         
         <div id="sales-grand-total">
-            <p>Faturamento Total (todas as vendas): R$ <span id="grand-total-value">0.00</span></p>
+            <p>Faturamento Total: R$ <span id="grand-total-value">0.00</span></p>
             <button id="clear-history-btn" class="delete-btn">Limpar Histórico</button>
         </div>
 

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addAnotherItemBtn = document.getElementById('add-another-item-btn');
     const itemsTableBody = document.querySelector('#items-table tbody');
     const newSaleForm = document.getElementById('new-sale-form');
+    const clientNameInput = document.getElementById('client-name'); // Campo do nome do cliente
     const saleItemsContainer = document.getElementById('sale-items-container');
     const addItemToSaleBtn = document.getElementById('add-item-to-sale-btn');
     const totalPiecesSoldSpan = document.getElementById('total-pieces-sold');
@@ -30,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
             items.forEach(item => {
                 const row = document.createElement('tr');
                 row.dataset.itemId = item.id;
-                // ALTERAÇÃO AQUI: Adicionados os atributos 'data-label' para responsividade
                 row.innerHTML = `
                     <td data-label="Nome"><input type="text" class="edit-name" value="${item.name}"></td>
                     <td data-label="Quantidade"><input type="number" class="edit-quantity" value="${item.quantity}" min="0"></td>
@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // ALTERAÇÃO AQUI: Exibe o nome do cliente no card do histórico
     const fetchAndDisplaySales = async () => {
         try {
             const response = await fetch(`${apiUrl}/sales`);
@@ -68,12 +69,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const saleCard = document.createElement('div');
                 saleCard.className = 'sale-card';
                 
-                const saleDate = new Date(sale.date).toLocaleString('pt-BR');
+                const saleDate = new Date(sale.date).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+                // Sanitiza o nome do cliente para evitar problemas de HTML injection
+                const clientName = sale.clientName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                 saleCard.innerHTML = `
                     <div class="sale-card-header">
-                        <strong>Venda #${sale.id}</strong>
-                        <span>Data: ${saleDate}</span>
+                        <div class="info-venda">
+                            <span class="client-name">${clientName}</span>
+                            <span class="sale-id">Venda #${sale.id}</span>
+                        </div>
+                        <span class="sale-date">Data: ${saleDate}</span>
                     </div>
                     <div class="sale-card-body">
                         <p>Itens vendidos:</p>
@@ -241,9 +247,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ALTERAÇÃO AQUI: Captura e valida o nome do cliente antes de enviar
     newSaleForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const clientName = clientNameInput.value.trim();
+        if (!clientName) {
+            return alert('Por favor, insira o nome do cliente.');
+        }
+
         const saleItemDivs = saleItemsContainer.querySelectorAll('.sale-item');
         if (saleItemDivs.length === 0) return alert('Adicione pelo menos um item à venda.');
 
@@ -272,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await fetch(`${apiUrl}/sales`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: saleItems, totalValue, totalPieces }),
+                body: JSON.stringify({ clientName, items: saleItems, totalValue, totalPieces }),
             });
 
             const stockUpdates = saleItems.map(soldItem => {
@@ -286,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await Promise.all(stockUpdates);
             
             alert('Venda registrada com sucesso!');
+            clientNameInput.value = ''; // Limpa o campo do nome do cliente
             saleItemsContainer.innerHTML = '';
             updateSaleSummary();
             fetchAndDisplayItems();
