@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar apenas as dependências de produção para manter a imagem limpa e segura
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Copiar o resto do código da aplicação (backend e frontend)
 # O .dockerignore garantirá que node_modules e outros arquivos não sejam copiados
