@@ -1,0 +1,300 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1400px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    flex: 1;
+    min-width: 400px;
+}
+
+h1, h2, h3 {
+    color: #1d3557;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+.item-to-add, .sale-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+button {
+    background-color: #457b9d;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+button:hover {
+    background-color: #1d3557;
+}
+
+#add-another-item-btn, #add-item-to-sale-btn {
+    background-color: #2a9d8f;
+}
+
+#add-another-item-btn:hover, #add-item-to-sale-btn:hover {
+    background-color: #264653;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead {
+    background-color: #f2f2f2;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+td input {
+    margin-bottom: 0;
+}
+
+.delete-btn, .remove-sale-item-btn {
+    background-color: #e63946;
+    padding: 5px 10px;
+    margin: 0;
+}
+
+.delete-btn:hover, .remove-sale-item-btn:hover {
+    background-color: #a8202b;
+}
+
+#sale-summary {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e3f2fd;
+    border-left: 5px solid #457b9d;
+    border-radius: 4px;
+}
+
+#sale-summary p {
+    margin: 5px 0;
+    font-size: 1.1em;
+}
+
+#sale-summary span {
+    font-weight: bold;
+}
+
+.section-full-width {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    flex-basis: 100%;
+    max-width: 1400px;
+    margin: auto;
+}
+
+#sales-grand-total {
+    background-color: #1d3557;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+#sales-grand-total p {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    flex-grow: 1;
+    text-align: left;
+}
+
+#sales-grand-total button {
+    margin: 0;
+}
+
+#sales-history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sale-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.sale-card-header, .sale-card-footer {
+    background-color: #f2f2f2;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.sale-card-header {
+    border-bottom: 1px solid #ddd;
+}
+
+.sale-card-footer {
+    border-top: 1px solid #ddd;
+    font-size: 0.9em;
+}
+
+.sale-card-body {
+    padding: 15px;
+}
+
+.sale-card-body p {
+    margin-top: 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.sale-card-body ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sale-card-body li {
+    background-color: #fafafa;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+/* --- Estilos Responsivos --- */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    .container {
+        flex-direction: column;
+    }
+
+    .section {
+        min-width: auto;
+    }
+
+    /* Transforma a tabela em "cartões" */
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+
+    td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+
+    td:before {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label);
+        font-weight: bold;
+        text-align: left;
+    }
+
+    td:last-child {
+        border-bottom: 0;
+    }
+
+    td input {
+        text-align: right;
+    }
+
+    .delete-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    #sales-grand-total {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    #sales-grand-total p {
+        text-align: center;
+    }
+}

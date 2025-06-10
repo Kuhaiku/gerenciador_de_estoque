@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque e Vendas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Controle de Estoque e Vendas</h1>
+
+    <div class="container">
+        <div class="section">
+            <h2>📦 Cadastro de Itens</h2>
+            <form id="add-item-form">
+                <div id="items-to-add-container">
+                    <div class="item-to-add">
+                        <input type="text" placeholder="Nome do Item" class="item-name" required>
+                        <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
+                        <input type="number" placeholder="Valor Unitário (R$)" class="item-value" step="0.01" min="0.01" required>
+                    </div>
+                </div>
+                <button type="button" id="add-another-item-btn">+ Adicionar Outro Item</button>
+                <button type="submit">Salvar Itens</button>
+            </form>
+            <h3>Itens Cadastrados</h3>
+            <table id="items-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Quantidade</th>
+                        <th>Valor Unitário (R$)</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>🧾 Nova Venda</h2>
+            <form id="new-sale-form">
+                 <div id="sale-items-container">
+                    </div>
+                 <button type="button" id="add-item-to-sale-btn">Adicionar Item à Venda</button>
+                 <button type="submit">Registrar Venda</button>
+            </form>
+            <div id="sale-summary">
+                <h3>Resumo da Venda</h3>
+                <p>Total de Peças: <span id="total-pieces-sold">0</span></p>
+                <p>Total da Venda: R$ <span id="total-sale-value">0.00</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <div class="section-full-width">
+        <h2>📊 Histórico e Total de Vendas</h2>
+        
+        <div id="sales-grand-total">
+            <p>Faturamento Total (todas as vendas): R$ <span id="grand-total-value">0.00</span></p>
+            <button id="clear-history-btn" class="delete-btn">Limpar Histórico</button>
+        </div>
+
+        <div id="sales-history-container">
+            </div>
+    </div>
+</body>
+</html>
