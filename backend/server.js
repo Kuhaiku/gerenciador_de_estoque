@@ -41,9 +41,6 @@ app.post('/api/items', async (req, res) => {
     const items = await readData(ITEMS_FILE);
     newItems.forEach(newItem => {
         newItem.id = Date.now() + Math.random();
-        // Garantir que os novos campos são numéricos
-        newItem.internalValue = parseFloat(newItem.internalValue);
-        newItem.saleValue = parseFloat(newItem.saleValue);
         items.push(newItem);
     });
     await writeData(ITEMS_FILE, items);
@@ -53,14 +50,12 @@ app.post('/api/items', async (req, res) => {
 app.put('/api/items/:id', async (req, res) => {
     const items = await readData(ITEMS_FILE);
     const itemId = parseFloat(req.params.id);
-    // Desestruturar para obter os novos campos
-    const { name, quantity, internalValue, saleValue } = req.body; 
+    const updatedItemData = req.body;
     const itemIndex = items.findIndex(item => item.id === itemId);
     if (itemIndex === -1) {
         return res.status(404).json({ message: 'Item não encontrado.' });
     }
-    // Atualizar o item com os novos campos
-    items[itemIndex] = { ...items[itemIndex], name, quantity, internalValue, saleValue }; 
+    items[itemIndex] = { ...items[itemIndex], ...updatedItemData };
     await writeData(ITEMS_FILE, items);
     res.json(items[itemIndex]);
 });
@@ -79,6 +74,7 @@ app.get('/api/sales', async (req, res) => {
     res.json(sales);
 });
 
+// ALTERAÇÃO AQUI: Recebe e valida o nome do cliente
 app.post('/api/sales', async (req, res) => {
     const { items: saleItems, totalValue, totalPieces, clientName } = req.body;
     if (!saleItems || totalValue === undefined || totalPieces === undefined || !clientName) {
@@ -89,7 +85,7 @@ app.post('/api/sales', async (req, res) => {
     const newSale = {
         id: Date.now(),
         date: new Date().toISOString(),
-        clientName: clientName,
+        clientName: clientName, // Salva o nome do cliente
         items: saleItems,
         totalValue,
         totalPieces
