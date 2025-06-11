@@ -128,9 +128,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // REMOVIDO: Chamada inicial para ter um item no formulário.
-    // O primeiro item já está no HTML.
-    // addNewItemInputFields(); 
+    // Adiciona listener para o campo de valor interno no item JÁ EXISTENTE no HTML
+    const initialItemDiv = itemsToAddContainer.querySelector('.item-to-add');
+    if (initialItemDiv) {
+        const initialInternalValueInput = initialItemDiv.querySelector('.item-internal-value');
+        const initialSaleValueInput = initialItemDiv.querySelector('.item-sale-value');
+
+        if (initialInternalValueInput && initialSaleValueInput) {
+            initialInternalValueInput.addEventListener('input', () => {
+                const val = parseFloat(initialInternalValueInput.value);
+                if (!isNaN(val)) {
+                    initialSaleValueInput.value = (val * 1.50).toFixed(2);
+                } else {
+                    initialSaleValueInput.value = '';
+                }
+            });
+        }
+    }
+
 
     addAnotherItemBtn.addEventListener('click', () => {
         addNewItemInputFields(); // Adiciona um novo item com preenchimento automático
@@ -155,27 +170,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(itemsToSave),
             });
+            // Limpa e recria o primeiro campo para garantir que o listener esteja ativo
             itemsToAddContainer.innerHTML = `
                 <div class="item-to-add">
                     <input type="text" placeholder="Nome do Item" class="item-name" required>
                     <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
                     <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
                     <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
-                </div>`; // Restaura o primeiro campo para o estado inicial
+                </div>`; 
             
-            // Adiciona listener para o campo de valor interno no item restaurado
-            const initialInternalValueInput = itemsToAddContainer.querySelector('.item-internal-value');
-            const initialSaleValueInput = itemsToAddContainer.querySelector('.item-sale-value');
-            initialInternalValueInput.addEventListener('input', () => {
-                const val = parseFloat(initialInternalValueInput.value);
-                if (!isNaN(val)) {
-                    initialSaleValueInput.value = (val * 1.50).toFixed(2);
-                } else {
-                    initialSaleValueInput.value = '';
+            // Re-adiciona o listener para o campo de valor interno no item restaurado
+            const newInitialItemDiv = itemsToAddContainer.querySelector('.item-to-add');
+            if (newInitialItemDiv) {
+                const newInitialInternalValueInput = newInitialItemDiv.querySelector('.item-internal-value');
+                const newInitialSaleValueInput = newInitialItemDiv.querySelector('.item-sale-value');
+
+                if (newInitialInternalValueInput && newInitialSaleValueInput) {
+                    newInitialInternalValueInput.addEventListener('input', () => {
+                        const val = parseFloat(newInitialInternalValueInput.value);
+                        if (!isNaN(val)) {
+                            newInitialSaleValueInput.value = (val * 1.50).toFixed(2);
+                        } else {
+                            newInitialSaleValueInput.value = '';
+                        }
+                    });
                 }
-            });
-
-
+            }
             fetchAndDisplayItems();
         } catch (error) {
             console.error('Erro ao adicionar itens:', error);
