@@ -47,13 +47,9 @@
                  <input type="text" id="client-name" placeholder="Nome do Cliente" required>
                  <hr>
                  <div class="form-group">
-                    <label for="sale-discount">Desconto (% ou R$):</label>
-                    <input type="number" id="sale-discount" placeholder="Ex: 10 (para 10%) ou 5.00 (para R$5)" min="0" step="0.01">
-                    <select id="discount-type">
-                        <option value="percentage">%</option>
-                        <option value="value">R$</option>
-                    </select>
-                </div>
+                    <label for="sale-discount">Desconto (R$):</label>
+                    <input type="number" id="sale-discount" placeholder="Ex: 5.00" min="0" step="0.01">
+                 </div>
                 <div class="form-group">
                     <label for="payment-method">Método de Pagamento:</label>
                     <select id="payment-method" required>
