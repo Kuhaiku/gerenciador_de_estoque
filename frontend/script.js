@@ -102,16 +102,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DE EVENTOS ---
     
-    addAnotherItemBtn.addEventListener('click', () => {
+    // Função para adicionar um novo item com preenchimento automático do valor de venda
+    const addNewItemInputFields = (internalValue = '', saleValue = '') => {
         const newItemDiv = document.createElement('div');
         newItemDiv.classList.add('item-to-add');
         newItemDiv.innerHTML = `
             <input type="text" placeholder="Nome do Item" class="item-name" required>
             <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
-            <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
-            <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
+            <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" value="${internalValue}" step="0.01" min="0.01" required>
+            <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" value="${saleValue}" step="0.01" min="0.01" required>
         `;
         itemsToAddContainer.appendChild(newItemDiv);
+
+        // Adiciona listener para calcular o valor de venda automaticamente
+        const internalValueInput = newItemDiv.querySelector('.item-internal-value');
+        const saleValueInput = newItemDiv.querySelector('.item-sale-value');
+
+        internalValueInput.addEventListener('input', () => {
+            const val = parseFloat(internalValueInput.value);
+            if (!isNaN(val)) {
+                saleValueInput.value = (val * 1.50).toFixed(2); // 50% de acréscimo
+            } else {
+                saleValueInput.value = '';
+            }
+        });
+    };
+
+    // Chamada inicial para ter um item no formulário
+    addNewItemInputFields();
+
+    addAnotherItemBtn.addEventListener('click', () => {
+        addNewItemInputFields(); // Adiciona um novo item com preenchimento automático
     });
 
     addItemForm.addEventListener('submit', async (e) => {
@@ -133,13 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(itemsToSave),
             });
-            itemsToAddContainer.innerHTML = `
-                <div class="item-to-add">
-                    <input type="text" placeholder="Nome do Item" class="item-name" required>
-                    <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
-                    <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
-                    <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
-                </div>`;
+            itemsToAddContainer.innerHTML = ''; // Limpa o container
+            addNewItemInputFields(); // Adiciona um novo campo vazio após salvar
             fetchAndDisplayItems();
         } catch (error) {
             console.error('Erro ao adicionar itens:', error);
@@ -197,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const quantity = parseInt(quantityInput.value) || 0;
             const selectedOption = select.options[select.selectedIndex];
             
-            if (selectedOption && selectedOption.dataset.saleValue) { // Usar data-sale-value para o cálculo
+            if (selectedOption && selectedOption.dataset.saleValue) {
                 const value = parseFloat(selectedOption.dataset.saleValue);
                 totalPieces += quantity;
                 totalValue += quantity * value;
@@ -218,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let optionsHTML = '<option value="">Selecione um item...</option>';
         availableItems.forEach(item => {
             if (item.quantity > 0) {
-                // Adiciona data-internal-value e data-sale-value para serem acessíveis
                 optionsHTML += `<option value="${item.id}" data-internal-value="${item.internalValue}" data-sale-value="${item.saleValue}">${item.name} (Estoque: ${item.quantity})</option>`;
             }
         });
@@ -275,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Estoque insuficiente para o item "${selectedItem.name}". Disponível: ${selectedItem.quantity}`);
                 insufficientStock = true;
             }
-            return { id: selectedItem.id, name: selectedItem.name, quantity: quantitySold, unitValue: selectedItem.saleValue }; // Usa selectedItem.saleValue
+            return { id: selectedItem.id, name: selectedItem.name, quantity: quantitySold, unitValue: selectedItem.saleValue };
         }).filter(Boolean);
 
         if (insufficientStock || saleItems.length === 0) return;
