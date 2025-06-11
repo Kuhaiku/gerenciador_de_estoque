@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addAnotherItemBtn = document.getElementById('add-another-item-btn');
     const itemsTableBody = document.querySelector('#items-table tbody');
     const newSaleForm = document.getElementById('new-sale-form');
-    const clientNameInput = document.getElementById('client-name');
+    const clientNameInput = document.getElementById('client-name'); // Campo do nome do cliente
     const saleItemsContainer = document.getElementById('sale-items-container');
     const addItemToSaleBtn = document.getElementById('add-item-to-sale-btn');
     const totalPiecesSoldSpan = document.getElementById('total-pieces-sold');
@@ -15,29 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const salesHistoryContainer = document.getElementById('sales-history-container');
     const grandTotalValueSpan = document.getElementById('grand-total-value');
     const clearHistoryBtn = document.getElementById('clear-history-btn');
-
-    // Novas variáveis para Desconto e Método de Pagamento
-    const saleDiscountInput = document.getElementById('sale-discount');
-    const discountTypeSelect = document.getElementById('discount-type');
-    const paymentMethodSelect = document.getElementById('payment-method');
     
     let availableItems = [];
-    let profitPercentage = 1.50; // Valor padrão, será atualizado pelo backend
 
     // --- FUNÇÕES ---
-
-    const fetchProfitPercentage = async () => {
-        try {
-            const response = await fetch(`${apiUrl}/config/profitPercentage`);
-            if (!response.ok) throw new Error('Erro ao buscar porcentagem de lucro.');
-            const data = await response.json();
-            profitPercentage = parseFloat(data.percentage) || 1.50; // Garante que é número
-        } catch (error) {
-            console.error('Erro ao carregar porcentagem de lucro do backend:', error);
-            // Continua com o valor padrão se houver erro
-        }
-    };
-
 
     const fetchAndDisplayItems = async () => {
         try {
@@ -53,8 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.innerHTML = `
                     <td data-label="Nome"><input type="text" class="edit-name" value="${item.name}"></td>
                     <td data-label="Quantidade"><input type="number" class="edit-quantity" value="${item.quantity}" min="0"></td>
-                    <td data-label="Valor Interno (R$)"><input type="number" class="edit-internal-value" value="${item.internalValue}" step="0.01" min="0"></td>
-                    <td data-label="Valor de Venda (R$)"><input type="number" class="edit-sale-value" value="${item.saleValue}" step="0.01" min="0"></td>
+                    <td data-label="Valor Unitário (R$)"><input type="number" class="edit-value" value="${item.value}" step="0.01" min="0"></td>
                     <td data-label="Ações"><button class="delete-btn">Excluir</button></td>
                 `;
                 itemsTableBody.appendChild(row);
@@ -65,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // ALTERAÇÃO AQUI: Exibe o nome do cliente no card do histórico
     const fetchAndDisplaySales = async () => {
         try {
             const response = await fetch(`${apiUrl}/sales`);
@@ -89,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 saleCard.className = 'sale-card';
                 
                 const saleDate = new Date(sale.date).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+                // Sanitiza o nome do cliente para evitar problemas de HTML injection
                 const clientName = sale.clientName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                 saleCard.innerHTML = `
@@ -102,8 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="sale-card-body">
                         <p>Itens vendidos:</p>
                         <ul>${itemsListHTML}</ul>
-                        <p>Método de Pagamento: <strong>${sale.paymentMethod}</strong></p>
-                        <p>Desconto Aplicado: <strong>${sale.discount > 0 ? (sale.discountType === 'percentage' ? `${sale.discount}%` : `R$ ${sale.discount.toFixed(2)}`) : 'Nenhum'}</strong></p>
                     </div>
                     <div class="sale-card-footer">
                         <span>Total de Peças: ${sale.totalPieces}</span>
@@ -123,53 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DE EVENTOS ---
     
-    // Função para adicionar um novo item com preenchimento automático do valor de venda
-    const addNewItemInputFields = (internalValue = '', saleValue = '') => {
+    addAnotherItemBtn.addEventListener('click', () => {
         const newItemDiv = document.createElement('div');
         newItemDiv.classList.add('item-to-add');
         newItemDiv.innerHTML = `
             <input type="text" placeholder="Nome do Item" class="item-name" required>
             <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
-            <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" value="${internalValue}" step="0.01" min="0.01" required>
-            <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" value="${saleValue}" step="0.01" min="0.01" required>
+            <input type="number" placeholder="Valor Unitário (R$)" class="item-value" step="0.01" min="0.01" required>
         `;
         itemsToAddContainer.appendChild(newItemDiv);
-
-        // Adiciona listener para calcular o valor de venda automaticamente
-        const internalValueInput = newItemDiv.querySelector('.item-internal-value');
-        const saleValueInput = newItemDiv.querySelector('.item-sale-value');
-
-        internalValueInput.addEventListener('input', () => {
-            const val = parseFloat(internalValueInput.value);
-            if (!isNaN(val)) {
-                saleValueInput.value = (val * profitPercentage).toFixed(2); // Usa a variável profitPercentage
-            } else {
-                saleValueInput.value = '';
-            }
-        });
-    };
-
-    // Adiciona listener para o campo de valor interno no item JÁ EXISTENTE no HTML
-    const initialItemDiv = itemsToAddContainer.querySelector('.item-to-add');
-    if (initialItemDiv) {
-        const initialInternalValueInput = initialItemDiv.querySelector('.item-internal-value');
-        const initialSaleValueInput = initialItemDiv.querySelector('.item-sale-value');
-
-        if (initialInternalValueInput && initialSaleValueInput) {
-            initialInternalValueInput.addEventListener('input', () => {
-                const val = parseFloat(initialInternalValueInput.value);
-                if (!isNaN(val)) {
-                    initialSaleValueInput.value = (val * profitPercentage).toFixed(2); // Usa a variável profitPercentage
-                } else {
-                    initialSaleValueInput.value = '';
-                }
-            });
-        }
-    }
-
-
-    addAnotherItemBtn.addEventListener('click', () => {
-        addNewItemInputFields(); // Adiciona um novo item com preenchimento automático
     });
 
     addItemForm.addEventListener('submit', async (e) => {
@@ -178,9 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemsToSave = Array.from(itemDivs).map(div => {
             const name = div.querySelector('.item-name').value;
             const quantity = parseInt(div.querySelector('.item-quantity').value);
-            const internalValue = parseFloat(div.querySelector('.item-internal-value').value);
-            const saleValue = parseFloat(div.querySelector('.item-sale-value').value);
-            return { name, quantity, internalValue, saleValue };
+            const value = parseFloat(div.querySelector('.item-value').value);
+            return { name, quantity, value };
         });
 
         if (itemsToSave.length === 0) return;
@@ -191,32 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(itemsToSave),
             });
-            // Limpa e recria o primeiro campo para garantir que o listener esteja ativo
             itemsToAddContainer.innerHTML = `
                 <div class="item-to-add">
                     <input type="text" placeholder="Nome do Item" class="item-name" required>
                     <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
-                    <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
-                    <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
-                </div>`; 
-            
-            // Re-adiciona o listener para o campo de valor interno no item restaurado
-            const newInitialItemDiv = itemsToAddContainer.querySelector('.item-to-add');
-            if (newInitialItemDiv) {
-                const newInitialInternalValueInput = newInitialItemDiv.querySelector('.item-internal-value');
-                const newInitialSaleValueInput = newInitialItemDiv.querySelector('.item-sale-value');
-
-                if (newInitialInternalValueInput && newInitialSaleValueInput) {
-                    newInitialInternalValueInput.addEventListener('input', () => {
-                        const val = parseFloat(newInitialInternalValueInput.value);
-                        if (!isNaN(val)) {
-                            newInitialSaleValueInput.value = (val * profitPercentage).toFixed(2);
-                        } else {
-                            newInitialSaleValueInput.value = '';
-                        }
-                    });
-                }
-            }
+                    <input type="number" placeholder="Valor Unitário (R$)" class="item-value" step="0.01" min="0.01" required>
+                </div>`;
             fetchAndDisplayItems();
         } catch (error) {
             console.error('Erro ao adicionar itens:', error);
@@ -246,14 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = row.dataset.itemId;
             const name = row.querySelector('.edit-name').value;
             const quantity = parseInt(row.querySelector('.edit-quantity').value);
-            const internalValue = parseFloat(row.querySelector('.edit-internal-value').value);
-            const saleValue = parseFloat(row.querySelector('.edit-sale-value').value);
+            const value = parseFloat(row.querySelector('.edit-value').value);
             
             try {
                 await fetch(`${apiUrl}/items/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, quantity, internalValue, saleValue }),
+                    body: JSON.stringify({ name, quantity, value }),
                 });
             } catch (error) {
                 console.error('Erro ao editar item:', error);
@@ -265,10 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateSaleSummary = () => {
         const saleItems = saleItemsContainer.querySelectorAll('.sale-item');
         let totalPieces = 0;
-        let totalValue = 0; // Valor total dos itens antes do desconto
-
-        // Guarda o valor total interno dos itens na venda para cálculo do desconto máximo
-        let totalInternalValueForSale = 0; 
+        let totalValue = 0;
 
         saleItems.forEach(item => {
             const quantityInput = item.querySelector('.sale-item-quantity');
@@ -277,55 +194,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const quantity = parseInt(quantityInput.value) || 0;
             const selectedOption = select.options[select.selectedIndex];
             
-            if (selectedOption && selectedOption.dataset.saleValue && selectedOption.dataset.internalValue) {
-                const saleItemValue = parseFloat(selectedOption.dataset.saleValue);
-                const internalItemValue = parseFloat(selectedOption.dataset.internalValue); // Pega o valor interno
+            if (selectedOption && selectedOption.dataset.value) {
+                const value = parseFloat(selectedOption.dataset.value);
                 totalPieces += quantity;
-                totalValue += quantity * saleItemValue;
-                totalInternalValueForSale += quantity * internalItemValue; // Acumula o valor interno total
+                totalValue += quantity * value;
             }
         });
-
-        // Lógica de Desconto
-        const discount = parseFloat(saleDiscountInput.value) || 0;
-        const discountType = discountTypeSelect.value;
-
-        let finalValue = totalValue;
-        let effectiveDiscount = 0; // Desconto em R$ aplicado
-
-        if (discount > 0) {
-            if (discountType === 'percentage') {
-                effectiveDiscount = totalValue * (discount / 100);
-            } else if (discountType === 'value') {
-                effectiveDiscount = discount;
-            }
-        }
-
-        // Validação do desconto máximo: o valor final não pode ser menor que o valor interno total
-        if ((totalValue - effectiveDiscount) < totalInternalValueForSale) {
-            alert(`O desconto máximo permitido é de R$ ${(totalValue - totalInternalValueForSale).toFixed(2)}. Não é possível vender abaixo do custo interno.`);
-            // Reseta o desconto para o máximo permitido
-            effectiveDiscount = totalValue - totalInternalValueForSale;
-            if (effectiveDiscount < 0) effectiveDiscount = 0; // Garante que não é negativo se totalValue já for menor
-            
-            // Tenta ajustar o campo de desconto na interface (opcional, pode ser complexo ajustar % para R$)
-            if (discountType === 'value') {
-                 saleDiscountInput.value = effectiveDiscount.toFixed(2);
-            } else {
-                 // Se for percentual, pode ser difícil ajustar para o equivalente em % sem feedback instantâneo
-                 // Poderíamos calcular e exibir o % máximo aqui, mas a UX pode ser complicada.
-                 // Por simplicidade, apenas alertamos e impedimos a venda se tentar ir além.
-            }
-            finalValue = totalInternalValueForSale; // O valor final é o valor interno se o desconto for muito alto
-            // Pode ser útil retornar false ou jogar um erro aqui para impedir a submissão,
-            // mas updateSaleSummary geralmente só atualiza a exibição. A validação real virá no submit.
-
-        } else {
-            finalValue = totalValue - effectiveDiscount;
-        }
-
         totalPiecesSoldSpan.textContent = totalPieces;
-        totalSaleValueSpan.textContent = finalValue.toFixed(2);
+        totalSaleValueSpan.textContent = totalValue.toFixed(2);
     };
 
     const createSaleItemRow = () => {
@@ -339,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let optionsHTML = '<option value="">Selecione um item...</option>';
         availableItems.forEach(item => {
             if (item.quantity > 0) {
-                optionsHTML += `<option value="${item.id}" data-internal-value="${item.internalValue}" data-sale-value="${item.saleValue}">${item.name} (Estoque: ${item.quantity})</option>`;
+                optionsHTML += `<option value="${item.id}" data-value="${item.value}">${item.name} (Estoque: ${item.quantity})</option>`;
             }
         });
         select.innerHTML = optionsHTML;
@@ -371,33 +247,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Listeners para os campos de desconto e método de pagamento
-    saleDiscountInput.addEventListener('input', updateSaleSummary);
-    discountTypeSelect.addEventListener('change', updateSaleSummary);
-    // paymentMethodSelect.addEventListener('change', updateSaleSummary); // Não precisa recalcular o resumo da venda ao mudar o método de pagamento
-
+    // ALTERAÇÃO AQUI: Captura e valida o nome do cliente antes de enviar
     newSaleForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const clientName = clientNameInput.value.trim();
-        const discount = parseFloat(saleDiscountInput.value) || 0;
-        const discountType = discountTypeSelect.value;
-        const paymentMethod = paymentMethodSelect.value;
-
-
         if (!clientName) {
             return alert('Por favor, insira o nome do cliente.');
-        }
-        if (!paymentMethod) {
-            return alert('Por favor, selecione o método de pagamento.');
         }
 
         const saleItemDivs = saleItemsContainer.querySelectorAll('.sale-item');
         if (saleItemDivs.length === 0) return alert('Adicione pelo menos um item à venda.');
 
         let insufficientStock = false;
-        let totalInternalValueForSubmission = 0; // Para validação no submit
-        
         const saleItems = Array.from(saleItemDivs).map(div => {
             const select = div.querySelector('.sale-item-select');
             const itemId = select.value;
@@ -410,39 +272,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Estoque insuficiente para o item "${selectedItem.name}". Disponível: ${selectedItem.quantity}`);
                 insufficientStock = true;
             }
-            totalInternalValueForSubmission += quantitySold * selectedItem.internalValue; // Acumula para validação
-            return { id: selectedItem.id, name: selectedItem.name, quantity: quantitySold, unitValue: selectedItem.saleValue, internalValue: selectedItem.internalValue }; // Incluir internalValue na venda para referência futura
+            return { id: selectedItem.id, name: selectedItem.name, quantity: quantitySold, unitValue: selectedItem.value };
         }).filter(Boolean);
 
         if (insufficientStock || saleItems.length === 0) return;
 
-        const totalValueBeforeDiscount = saleItems.reduce((acc, item) => acc + (item.quantity * item.unitValue), 0); // Recalcula para garantir
-        
-        let effectiveDiscountAmount = 0;
-        if (discount > 0) {
-            if (discountType === 'percentage') {
-                effectiveDiscountAmount = totalValueBeforeDiscount * (discount / 100);
-            } else if (discountType === 'value') {
-                effectiveDiscountAmount = discount;
-            }
-        }
-
-        // Validação final do desconto antes de enviar
-        if ((totalValueBeforeDiscount - effectiveDiscountAmount) < totalInternalValueForSubmission) {
-            alert(`ATENÇÃO: O desconto excede o limite! O valor final da venda não pode ser menor que o valor interno total dos itens.`);
-            return; // Impede a submissão
-        }
-
-
         const totalPieces = parseFloat(totalPiecesSoldSpan.textContent);
-        const totalValue = parseFloat(totalSaleValueSpan.textContent); // Este já é o valor FINAL com desconto aplicado.
-
+        const totalValue = parseFloat(totalSaleValueSpan.textContent);
 
         try {
             await fetch(`${apiUrl}/sales`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ clientName, items: saleItems, totalValue, totalPieces, discount, discountType, paymentMethod }), // Inclui discount, discountType, paymentMethod
+                body: JSON.stringify({ clientName, items: saleItems, totalValue, totalPieces }),
             });
 
             const stockUpdates = saleItems.map(soldItem => {
@@ -456,10 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await Promise.all(stockUpdates);
             
             alert('Venda registrada com sucesso!');
-            clientNameInput.value = '';
-            saleDiscountInput.value = ''; // Limpa o desconto
-            discountTypeSelect.value = 'percentage'; // Reseta o tipo de desconto
-            paymentMethodSelect.value = ''; // Limpa o método de pagamento
+            clientNameInput.value = ''; // Limpa o campo do nome do cliente
             saleItemsContainer.innerHTML = '';
             updateSaleSummary();
             fetchAndDisplayItems();
@@ -501,7 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- CARREGAMENTO INICIAL ---
-    fetchProfitPercentage(); // Busca a porcentagem de lucro ao carregar
     fetchAndDisplayItems();
     fetchAndDisplaySales();
 });
