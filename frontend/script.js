@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addAnotherItemBtn = document.getElementById('add-another-item-btn');
     const itemsTableBody = document.querySelector('#items-table tbody');
     const newSaleForm = document.getElementById('new-sale-form');
-    const clientNameInput = document.getElementById('client-name'); // Campo do nome do cliente
+    const clientNameInput = document.getElementById('client-name');
     const saleItemsContainer = document.getElementById('sale-items-container');
     const addItemToSaleBtn = document.getElementById('add-item-to-sale-btn');
     const totalPiecesSoldSpan = document.getElementById('total-pieces-sold');
@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.innerHTML = `
                     <td data-label="Nome"><input type="text" class="edit-name" value="${item.name}"></td>
                     <td data-label="Quantidade"><input type="number" class="edit-quantity" value="${item.quantity}" min="0"></td>
-                    <td data-label="Valor Unitário (R$)"><input type="number" class="edit-value" value="${item.value}" step="0.01" min="0"></td>
+                    <td data-label="Valor Interno (R$)"><input type="number" class="edit-internal-value" value="${item.internalValue}" step="0.01" min="0"></td>
+                    <td data-label="Valor de Venda (R$)"><input type="number" class="edit-sale-value" value="${item.saleValue}" step="0.01" min="0"></td>
                     <td data-label="Ações"><button class="delete-btn">Excluir</button></td>
                 `;
                 itemsTableBody.appendChild(row);
@@ -45,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ALTERAÇÃO AQUI: Exibe o nome do cliente no card do histórico
     const fetchAndDisplaySales = async () => {
         try {
             const response = await fetch(`${apiUrl}/sales`);
@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 saleCard.className = 'sale-card';
                 
                 const saleDate = new Date(sale.date).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-                // Sanitiza o nome do cliente para evitar problemas de HTML injection
                 const clientName = sale.clientName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                 saleCard.innerHTML = `
@@ -109,7 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
         newItemDiv.innerHTML = `
             <input type="text" placeholder="Nome do Item" class="item-name" required>
             <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
-            <input type="number" placeholder="Valor Unitário (R$)" class="item-value" step="0.01" min="0.01" required>
+            <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
+            <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
         `;
         itemsToAddContainer.appendChild(newItemDiv);
     });
@@ -120,8 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemsToSave = Array.from(itemDivs).map(div => {
             const name = div.querySelector('.item-name').value;
             const quantity = parseInt(div.querySelector('.item-quantity').value);
-            const value = parseFloat(div.querySelector('.item-value').value);
-            return { name, quantity, value };
+            const internalValue = parseFloat(div.querySelector('.item-internal-value').value);
+            const saleValue = parseFloat(div.querySelector('.item-sale-value').value);
+            return { name, quantity, internalValue, saleValue };
         });
 
         if (itemsToSave.length === 0) return;
@@ -136,7 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="item-to-add">
                     <input type="text" placeholder="Nome do Item" class="item-name" required>
                     <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
-                    <input type="number" placeholder="Valor Unitário (R$)" class="item-value" step="0.01" min="0.01" required>
+                    <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
+                    <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
                 </div>`;
             fetchAndDisplayItems();
         } catch (error) {
@@ -167,13 +169,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = row.dataset.itemId;
             const name = row.querySelector('.edit-name').value;
             const quantity = parseInt(row.querySelector('.edit-quantity').value);
-            const value = parseFloat(row.querySelector('.edit-value').value);
+            const internalValue = parseFloat(row.querySelector('.edit-internal-value').value);
+            const saleValue = parseFloat(row.querySelector('.edit-sale-value').value);
             
             try {
                 await fetch(`${apiUrl}/items/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, quantity, value }),
+                    body: JSON.stringify({ name, quantity, internalValue, saleValue }),
                 });
             } catch (error) {
                 console.error('Erro ao editar item:', error);
@@ -194,8 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const quantity = parseInt(quantityInput.value) || 0;
             const selectedOption = select.options[select.selectedIndex];
             
-            if (selectedOption && selectedOption.dataset.value) {
-                const value = parseFloat(selectedOption.dataset.value);
+            if (selectedOption && selectedOption.dataset.saleValue) { // Usar data-sale-value para o cálculo
+                const value = parseFloat(selectedOption.dataset.saleValue);
                 totalPieces += quantity;
                 totalValue += quantity * value;
             }
@@ -215,7 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let optionsHTML = '<option value="">Selecione um item...</option>';
         availableItems.forEach(item => {
             if (item.quantity > 0) {
-                optionsHTML += `<option value="${item.id}" data-value="${item.value}">${item.name} (Estoque: ${item.quantity})</option>`;
+                // Adiciona data-internal-value e data-sale-value para serem acessíveis
+                optionsHTML += `<option value="${item.id}" data-internal-value="${item.internalValue}" data-sale-value="${item.saleValue}">${item.name} (Estoque: ${item.quantity})</option>`;
             }
         });
         select.innerHTML = optionsHTML;
@@ -247,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ALTERAÇÃO AQUI: Captura e valida o nome do cliente antes de enviar
     newSaleForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -272,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Estoque insuficiente para o item "${selectedItem.name}". Disponível: ${selectedItem.quantity}`);
                 insufficientStock = true;
             }
-            return { id: selectedItem.id, name: selectedItem.name, quantity: quantitySold, unitValue: selectedItem.value };
+            return { id: selectedItem.id, name: selectedItem.name, quantity: quantitySold, unitValue: selectedItem.saleValue }; // Usa selectedItem.saleValue
         }).filter(Boolean);
 
         if (insufficientStock || saleItems.length === 0) return;
@@ -298,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await Promise.all(stockUpdates);
             
             alert('Venda registrada com sucesso!');
-            clientNameInput.value = ''; // Limpa o campo do nome do cliente
+            clientNameInput.value = '';
             saleItemsContainer.innerHTML = '';
             updateSaleSummary();
             fetchAndDisplayItems();
