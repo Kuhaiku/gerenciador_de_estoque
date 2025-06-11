@@ -18,7 +18,8 @@
                     <div class="item-to-add">
                         <input type="text" placeholder="Nome do Item" class="item-name" required>
                         <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
-                        <input type="number" placeholder="Valor Unitário (R$)" class="item-value" step="0.01" min="0.01" required>
+                        <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
+                        <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
                     </div>
                 </div>
                 <button type="button" id="add-another-item-btn">+ Adicionar Outro Item</button>
@@ -30,7 +31,8 @@
                     <tr>
                         <th>Nome</th>
                         <th>Quantidade</th>
-                        <th>Valor Unitário (R$)</th>
+                        <th>Valor Interno (R$)</th>
+                        <th>Valor de Venda (R$)</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
