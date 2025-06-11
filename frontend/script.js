@@ -16,17 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const grandTotalValueSpan = document.getElementById('grand-total-value');
     const clearHistoryBtn = document.getElementById('clear-history-btn');
 
-    // Elementos para Desconto e Método de Pagamento (já estavam definidos, mas garantindo)
+    // Elementos para Desconto e Método de Pagamento
     const saleDiscountInput = document.getElementById('sale-discount');
     const paymentMethodSelect = document.getElementById('payment-method');
-    // Novos elementos para controlar a visibilidade
-    const discountGroup = saleDiscountInput.closest('.form-group');
-    const paymentMethodGroup = paymentMethodSelect.closest('.form-group');
+    // Elementos para controlar a visibilidade
+    const discountGroup = document.getElementById('discount-group');
+    const paymentMethodGroup = document.getElementById('payment-method-group');
 
     // Define o desconto padrão como 0 e esconde os campos inicialmente
     saleDiscountInput.value = '0.00';
     if (discountGroup) discountGroup.style.display = 'none';
     if (paymentMethodGroup) paymentMethodGroup.style.display = 'none';
+    saleDiscountInput.required = false; // Não obrigatório no início
+    paymentMethodSelect.required = false; // Não obrigatório no início
     
     let availableItems = [];
 
@@ -290,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             finalValue = totalInternalValueForSale; // O valor final se torna o valor interno total
         } else if (finalValue < 0) { // Garante que o valor final não seja negativo se o desconto for absurdamente alto, mas ainda dentro do limite interno
              finalValue = 0;
-             saleDiscountInput.value = totalValueBeforeDiscount.toFixed(2);
+             saleDiscountInput.value = totalValueBeforeDiscount.toFixed(2); // Se o desconto for maior que o valor total de venda, zera o valor final e define o desconto para o valor total de venda.
         }
 
         totalPiecesSoldSpan.textContent = totalPieces;
@@ -334,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saleItemDiv.append(select, quantityInput, removeBtn);
         saleItemsContainer.appendChild(saleItemDiv);
+        updateSaleSummary(); // Recalcula o resumo ao adicionar um item
     };
 
     addItemToSaleBtn.addEventListener('click', createSaleItemRow);
@@ -370,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!clientName) {
             return alert('Por favor, insira o nome do cliente.');
         }
-        if (!paymentMethod) { // Validação do campo obrigatório
+        if (!paymentMethod && saleItemsContainer.children.length > 0) { // Validação do campo obrigatório apenas se houver itens
             return alert('Por favor, selecione o método de pagamento.');
         }
 
