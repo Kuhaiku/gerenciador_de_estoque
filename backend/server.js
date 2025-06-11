@@ -41,6 +41,9 @@ app.post('/api/items', async (req, res) => {
     const items = await readData(ITEMS_FILE);
     newItems.forEach(newItem => {
         newItem.id = Date.now() + Math.random();
+        // Garantir que os novos campos são numéricos
+        newItem.internalValue = parseFloat(newItem.internalValue); //
+        newItem.saleValue = parseFloat(newItem.saleValue); //
         items.push(newItem);
     });
     await writeData(ITEMS_FILE, items);
@@ -50,12 +53,14 @@ app.post('/api/items', async (req, res) => {
 app.put('/api/items/:id', async (req, res) => {
     const items = await readData(ITEMS_FILE);
     const itemId = parseFloat(req.params.id);
-    const updatedItemData = req.body;
+    // Desestruturar para obter os novos campos
+    const { name, quantity, internalValue, saleValue } = req.body; //
     const itemIndex = items.findIndex(item => item.id === itemId);
     if (itemIndex === -1) {
         return res.status(404).json({ message: 'Item não encontrado.' });
     }
-    items[itemIndex] = { ...items[itemIndex], ...updatedItemData };
+    // Atualizar o item com os novos campos
+    items[itemIndex] = { ...items[itemIndex], name, quantity, internalValue, saleValue }; //
     await writeData(ITEMS_FILE, items);
     res.json(items[itemIndex]);
 });
@@ -74,21 +79,23 @@ app.get('/api/sales', async (req, res) => {
     res.json(sales);
 });
 
-// ALTERAÇÃO AQUI: Recebe e valida o nome do cliente
 app.post('/api/sales', async (req, res) => {
-    const { items: saleItems, totalValue, totalPieces, clientName } = req.body;
-    if (!saleItems || totalValue === undefined || totalPieces === undefined || !clientName) {
-        return res.status(400).json({ message: 'Dados da venda incompletos. Nome do cliente é obrigatório.' });
+    // Adicionando discount e paymentMethod na desestruturação
+    const { items: saleItems, totalValue, totalPieces, clientName, discount, paymentMethod } = req.body; //
+    if (!saleItems || totalValue === undefined || totalPieces === undefined || !clientName || discount === undefined || !paymentMethod) { //
+        return res.status(400).json({ message: 'Dados da venda incompletos. Nome do cliente, desconto e método de pagamento são obrigatórios.' }); //
     }
 
     const sales = await readData(SALES_FILE);
     const newSale = {
         id: Date.now(),
         date: new Date().toISOString(),
-        clientName: clientName, // Salva o nome do cliente
+        clientName: clientName,
         items: saleItems,
         totalValue,
-        totalPieces
+        totalPieces,
+        discount, // Salva o desconto
+        paymentMethod // Salva o método de pagamento
     };
 
     sales.push(newSale);
