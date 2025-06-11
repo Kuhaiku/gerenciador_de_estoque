@@ -16,9 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const grandTotalValueSpan = document.getElementById('grand-total-value');
     const clearHistoryBtn = document.getElementById('clear-history-btn');
 
-    // Elementos para Desconto e Método de Pagamento
+    // Elementos para Desconto e Método de Pagamento (já estavam definidos, mas garantindo)
     const saleDiscountInput = document.getElementById('sale-discount');
     const paymentMethodSelect = document.getElementById('payment-method');
+    // Novos elementos para controlar a visibilidade
+    const discountGroup = saleDiscountInput.closest('.form-group');
+    const paymentMethodGroup = paymentMethodSelect.closest('.form-group');
+
+    // Define o desconto padrão como 0 e esconde os campos inicialmente
+    saleDiscountInput.value = '0.00';
+    if (discountGroup) discountGroup.style.display = 'none';
+    if (paymentMethodGroup) paymentMethodGroup.style.display = 'none';
     
     let availableItems = [];
 
@@ -273,12 +281,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const discount = parseFloat(saleDiscountInput.value) || 0;
         let finalValue = totalValueBeforeDiscount - discount;
 
-        // Validação visual e alerta
+        // Auto-correção do desconto e alerta
         if (finalValue < totalInternalValueForSale) {
             const maxDiscountAllowed = totalValueBeforeDiscount - totalInternalValueForSale;
             alert(`ATENÇÃO: O desconto excede o limite! O valor final da venda não pode ser menor que o valor interno total dos itens. Desconto máximo permitido: R$ ${maxDiscountAllowed.toFixed(2)}`);
-            // Ajusta o valor final exibido para o mínimo possível
-            finalValue = totalInternalValueForSale;
+            // Autocorrige o input de desconto para o valor máximo permitido
+            saleDiscountInput.value = maxDiscountAllowed.toFixed(2);
+            finalValue = totalInternalValueForSale; // O valor final se torna o valor interno total
+        } else if (finalValue < 0) { // Garante que o valor final não seja negativo se o desconto for absurdamente alto, mas ainda dentro do limite interno
+             finalValue = 0;
+             saleDiscountInput.value = totalValueBeforeDiscount.toFixed(2);
         }
 
         totalPiecesSoldSpan.textContent = totalPieces;
@@ -286,6 +298,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const createSaleItemRow = () => {
+        // Mostra os campos de desconto e método de pagamento quando um item é adicionado
+        if (discountGroup) discountGroup.style.display = 'block';
+        if (paymentMethodGroup) paymentMethodGroup.style.display = 'block';
+        saleDiscountInput.required = true;
+        paymentMethodSelect.required = true;
+
         const saleItemDiv = document.createElement('div');
         saleItemDiv.classList.add('sale-item');
         
@@ -325,6 +343,15 @@ document.addEventListener('DOMContentLoaded', () => {
     saleItemsContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('remove-sale-item-btn')) {
             e.target.closest('.sale-item').remove();
+            // Esconde os campos se não houver mais itens na venda
+            if (saleItemsContainer.children.length === 0) {
+                if (discountGroup) discountGroup.style.display = 'none';
+                if (paymentMethodGroup) paymentMethodGroup.style.display = 'none';
+                saleDiscountInput.required = false;
+                paymentMethodSelect.required = false;
+                saleDiscountInput.value = '0.00'; // Reseta o desconto
+                paymentMethodSelect.value = ''; // Reseta o método de pagamento
+            }
             updateSaleSummary();
         }
     });
@@ -343,12 +370,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!clientName) {
             return alert('Por favor, insira o nome do cliente.');
         }
-        if (!paymentMethod) {
+        if (!paymentMethod) { // Validação do campo obrigatório
             return alert('Por favor, selecione o método de pagamento.');
         }
 
         const saleItemDivs = saleItemsContainer.querySelectorAll('.sale-item');
-        if (saleItemDivs.length === 0) return alert('Adicione pelo menos um item à venda.');
+        if (saleItemDivs.length === 0) { // Validação se há itens na venda
+            alert('Adicione pelo menos um item à venda.');
+            return;
+        }
 
         let insufficientStock = false;
         let totalInternalValueForSubmission = 0; // Para validação final
@@ -371,12 +401,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return { id: selectedItem.id, name: selectedItem.name, quantity: quantitySold, unitValue: selectedItem.saleValue, internalValue: selectedItem.internalValue }; // Incluir internalValue na venda para referência futura
         }).filter(Boolean);
 
-        if (insufficientStock || saleItems.length === 0) return;
+        if (insufficientStock || saleItems.length === 0) return; // Se houver estoque insuficiente ou nenhum item válido
 
-        // Validação final do desconto antes de enviar
+        // Validação final do desconto no momento da submissão
         if ((totalValueBeforeDiscountForSubmission - discount) < totalInternalValueForSubmission) {
             const maxDiscountAllowed = totalValueBeforeDiscountForSubmission - totalInternalValueForSubmission;
             alert(`ATENÇÃO: O desconto excede o limite! O valor final da venda não pode ser menor que o valor interno total dos itens. Desconto máximo permitido: R$ ${maxDiscountAllowed.toFixed(2)}`);
+            saleDiscountInput.value = maxDiscountAllowed.toFixed(2); // Autocorreção no input
             return; // Impede a submissão
         }
 
@@ -404,8 +435,15 @@ document.addEventListener('DOMContentLoaded', () => {
             
             alert('Venda registrada com sucesso!');
             clientNameInput.value = '';
-            saleDiscountInput.value = ''; // Limpa o desconto
-            paymentMethodSelect.value = ''; // Limpa o método de pagamento
+            saleDiscountInput.value = '0.00'; // Reseta o desconto
+            paymentMethodSelect.value = ''; // Reseta o método de pagamento
+            
+            // Esconde os campos novamente após a venda
+            if (discountGroup) discountGroup.style.display = 'none';
+            if (paymentMethodGroup) paymentMethodGroup.style.display = 'none';
+            saleDiscountInput.required = false;
+            paymentMethodSelect.required = false;
+
             saleItemsContainer.innerHTML = '';
             updateSaleSummary();
             fetchAndDisplayItems();
