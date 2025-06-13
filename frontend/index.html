@@ -3,89 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Estoque e Vendas</title>
+    <title>Controle de Estoque e Vendas Inteligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Controle de Estoque e Vendas</h1>
+    <h1>🛒 Controle de Estoque e Vendas</h1>
 
     <div class="container">
-        <div class="section">
-            <h2>📦 Cadastro de Itens</h2>
-            <form id="add-item-form">
-                <div id="items-to-add-container">
-                    <div class="item-to-add">
-                        <input type="text" placeholder="Nome do Item" class="item-name" required>
-                        <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
-                        <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
-                        <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
+        <div class="section" id="cadastro-itens-section">
+            <div class="section-header-toggle">
+                <h2>📦 Cadastro de Itens</h2>
+                <button class="toggle-section-btn" data-target="cadastro-itens-section"><i class="fas fa-eye-slash"></i> Esconder</button>
+            </div>
+            <div class="section-content"> <form id="add-item-form">
+                    <div id="items-to-add-container">
+                        <div class="item-to-add">
+                            <input type="text" placeholder="Nome do Item" class="item-name" required>
+                            <input type="number" placeholder="Qtd" class="item-quantity" min="1" required>
+                            <input type="number" placeholder="Valor Interno (R$)" class="item-internal-value" step="0.01" min="0.01" required>
+                            <input type="number" placeholder="Valor de Venda (R$)" class="item-sale-value" step="0.01" min="0.01" required>
+                            <button type="button" class="remove-add-item-btn" style="display: none;"><i class="fas fa-times"></i></button>
+                        </div>
                     </div>
-                </div>
-                <button type="button" id="add-another-item-btn">+ Adicionar Outro Item</button>
-                <button type="submit">Salvar Itens</button>
-            </form>
-            <h3>Itens Cadastrados</h3>
-            <table id="items-table">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Quantidade</th>
-                        <th>Valor Interno (R$)</th>
-                        <th>Valor de Venda (R$)</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
+                    <button type="button" id="add-another-item-btn"><i class="fas fa-plus"></i> Adicionar Outro Item</button>
+                    <button type="submit"><i class="fas fa-save"></i> Salvar Itens</button>
+                </form>
+                <h3>Itens Cadastrados</h3>
+                <table id="items-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Quantidade</th>
+                            <th>Valor Interno (R$)</th>
+                            <th>Valor de Venda (R$)</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                     </tbody>
-            </table>
+                </table>
+            </div>
         </div>
 
-        <div class="section">
-            <h2>🧾 Nova Venda</h2>
-            <form id="new-sale-form">
-                 <input type="text" id="client-name" placeholder="Nome do Cliente" required>
-                 <hr>
-                 <div id="sale-items-container">
+        <div class="section" id="cadastro-clientes-section">
+            <div class="section-header-toggle">
+                <h2>👥 Cadastro de Clientes</h2>
+                <button class="toggle-section-btn" data-target="cadastro-clientes-section"><i class="fas fa-eye-slash"></i> Esconder</button>
+            </div>
+            <div class="section-content"> <form id="add-client-form">
+                    <input type="text" id="client-register-name" placeholder="Nome do Cliente" required>
+                    <input type="tel" id="client-register-phone" placeholder="Telefone" required>
+                    <input type="text" id="client-register-address" placeholder="Endereço (opcional)">
+                    <button type="submit"><i class="fas fa-user-plus"></i> Cadastrar Cliente</button>
+                </form>
+                <h3>Clientes Cadastrados</h3>
+                <table id="clients-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Endereço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section" id="nova-venda-section">
+            <div class="section-header-toggle">
+                <h2>🧾 Nova Venda</h2>
+                <button class="toggle-section-btn" data-target="nova-venda-section"><i class="fas fa-eye-slash"></i> Esconder</button>
+            </div>
+            <div class="section-content"> <form id="new-sale-form">
+                    <div class="form-group">
+                        <label for="sale-client-select">Selecione o Cliente:</label>
+                        <select id="sale-client-select" required>
+                            <option value="cliente-sem-cadastro">Cliente Sem Cadastro</option>
+                            </select>
                     </div>
-                 <button type="button" id="add-item-to-sale-btn">Adicionar Item à Venda</button>
-                 
-                 <div class="form-group" id="discount-group">
-                    <label for="sale-discount">Desconto (R$):</label>
-                    <input type="number" id="sale-discount" placeholder="Ex: 5.00" min="0" step="0.01">
-                 </div>
-                <div class="form-group" id="payment-method-group">
-                    <label for="payment-method">Método de Pagamento:</label>
-                    <select id="payment-method" required>
-                        <option value="">Selecione...</option>
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="Cartão">Cartão</option>
-                        <option value="Pix">Pix</option>
-                        <option value="Boleto">Boleto</option>
-                    </select>
+                    <div id="client-anonymous-name-container"></div> 
+                    <hr>
+                    <div id="sale-items-container">
+                        </div>
+                    <button type="button" id="add-item-to-sale-btn"><i class="fas fa-cart-plus"></i> Adicionar Item à Venda</button>
+                    
+                    <div class="form-group" id="discount-group">
+                        <label for="sale-discount">Desconto (R$):</label>
+                        <input type="number" id="sale-discount" placeholder="Ex: 5.00" min="0" step="0.01" value="0.00">
+                    </div>
+                    <div class="form-group" id="payment-method-group">
+                        <label for="payment-method">Método de Pagamento:</label>
+                        <select id="payment-method" required>
+                            <option value="">Selecione...</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="Cartão">Cartão</option>
+                            <option value="Pix">Pix</option>
+                            <option value="Boleto">Boleto</option>
+                        </select>
+                    </div>
+                    <button type="submit"><i class="fas fa-cash-register"></i> Registrar Venda</button>
+                </form>
+                <div id="sale-summary">
+                    <h3>Resumo da Venda</h3>
+                    <p>Total de Peças: <span id="total-pieces-sold">0</span></p>
+                    <p>Valor Bruto (itens): R$ <span id="total-value-before-discount">0.00</span></p>
+                    <p>Desconto Aplicado: R$ <span id="discount-applied">0.00</span></p>
+                    <p>Total da Venda (Líquido): R$ <span id="total-sale-value">0.00</span></p>
                 </div>
-                <button type="submit">Registrar Venda</button>
-            </form>
-            <div id="sale-summary">
-                <h3>Resumo da Venda</h3>
-                <p>Total de Peças: <span id="total-pieces-sold">0</span></p>
-                <p>Total da Venda: R$ <span id="total-sale-value">0.00</span></p>
             </div>
         </div>
     </div>
 
+    <div class="section-full-width" id="historico-resumo-section">
+        <div class="section-header-toggle">
+            <h2>📊 Histórico e Resumo Financeiro</h2>
+            <button class="toggle-section-btn" data-target="historico-resumo-section"><i class="fas fa-eye-slash"></i> Esconder</button>
+        </div>
+        <div class="section-content"> <div id="financial-summary-cards">
+                <div class="summary-card">
+                    <h3>Faturamento Bruto Total</h3>
+                    <p>R$ <span id="grand-total-value">0.00</span></p>
+                </div>
+                <div class="summary-card">
+                    <h3>Lucro Estimado Total</h3>
+                    <p>R$ <span id="estimated-profit-value">0.00</span></p>
+                </div>
+            </div>
+
+            <div class="actions-history">
+                <button id="clear-history-btn" class="delete-btn"><i class="fas fa-trash-alt"></i> Limpar Tudo</button>
+            </div>
+
+            <div id="sales-history-container">
+            </div>
+
+            <div class="export-sales-bottom">
+                <button id="export-sales-btn" class="export-btn"><i class="fas fa-file-csv"></i> Exportar Vendas (CSV)</button>
+            </div>
+        </div>
+    </div>
     <script src="script.js"></script>
-
-    <div class="section-full-width">
-        <h2>📊 Histórico e Total de Vendas</h2>
-        
-        <div id="sales-grand-total">
-            <p>Faturamento Total: R$ <span id="grand-total-value">0.00</span></p>
-            <button id="clear-history-btn" class="delete-btn">Limpar Histórico</button>
-        </div>
-
-        <div id="sales-history-container">
-            </div>
-    </div>
 </body>
 </html>
