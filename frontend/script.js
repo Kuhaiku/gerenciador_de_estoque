@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ADMIN_PASSWORD = 'admin';
 
     // Variável para a porcentagem de venda (1.50 = 50% de lucro sobre o valor interno)
-    const PERCENTUAL_VENDA_PADRAO = 1.70; // Altere este valor para mudar a porcentagem de venda
+    const PERCENTUAL_VENDA_PADRAO = 1.50; // Altere este valor para mudar a porcentagem de venda
 
     // --- Elementos do DOM ---
     const addItemForm = document.getElementById('add-item-form');
@@ -277,34 +277,23 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const clearAllHistory = () => {
-        const password = prompt('Para limpar TODO o histórico (itens, vendas e clientes), digite a senha de administrador:');
+        const password = prompt('Para limpar SOMENTE o histórico de vendas, digite a senha de administrador:'); // Texto atualizado
         if (password === ADMIN_PASSWORD) {
-            if (confirm('Tem certeza que deseja limpar TODO o histórico (itens, vendas e clientes)? Esta ação NÃO PODE ser desfeita.')) {
-                // Limpa todos os dados no localStorage
-                // localStorage.removeItem(ITEMS_STORAGE_KEY);
-                // localStorage.removeItem(SALES_STORAGE_KEY);
-                // localStorage.removeItem(CLIENTS_STORAGE_KEY);
+            if (confirm('Tem certeza que deseja limpar SOMENTE o histórico de vendas? Esta ação NÃO PODE ser desfeita.')) { // Texto atualizado
+                // Limpa apenas os dados de vendas no localStorage
+                localStorage.removeItem(SALES_STORAGE_KEY);
                 
-                // Reseta as arrays in-memory
-                // availableItems = [];
+                // Reseta apenas a array in-memory de vendas
                 salesHistory = [];
-                // clients = [];
 
-                // Re-renderiza todos os componentes afetados
-                // displayItems();
+                // Re-renderiza apenas os componentes afetados pelo histórico de vendas
                 displaySales();
-                // displayClients();
-                // populateClientSelect();
                 
                 // Reseta o resumo da venda para 0.00
-                totalPiecesSoldSpan.textContent = '0';
-                totalValueBeforeDiscountSpan.textContent = '0.00';
-                discountAppliedSpan.textContent = '0.00';
-                totalSaleValueSpan.textContent = '0.00';
                 grandTotalValueSpan.textContent = '0.00';
                 estimatedProfitValueSpan.textContent = '0.00';
 
-                alert('Todo o histórico (itens, vendas, clientes) foi limpo com sucesso!');
+                alert('Histórico de vendas limpo com sucesso!'); // Texto atualizado
             }
         } else if (password !== null) {
             alert('Senha incorreta. O histórico não foi limpo.');
@@ -446,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const saleValueInput = internalValueInput.closest('.item-to-add').querySelector('.item-sale-value');
         const val = parseFloat(internalValueInput.value);
         if (!isNaN(val) && val > 0) {
-            saleValueInput.value = (val * PERCENTUAL_VENDA_PADRAO).toFixed(2); // Usa a variável aqui
+            saleValueInput.value = (val * PERCENTUAL_VENDA_PADRAO).toFixed(2);
         } else {
             saleValueInput.value = '';
         }
