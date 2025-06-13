@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const CLIENTS_STORAGE_KEY = STORAGE_PREFIX + 'clients';
     const ADMIN_PASSWORD = 'admin';
 
+    // Variável para a porcentagem de venda (1.50 = 50% de lucro sobre o valor interno)
+    const PERCENTUAL_VENDA_PADRAO = 1.70; // Altere este valor para mudar a porcentagem de venda
+
     // --- Elementos do DOM ---
     const addItemForm = document.getElementById('add-item-form');
     const itemsToAddContainer = document.getElementById('items-to-add-container');
@@ -443,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const saleValueInput = internalValueInput.closest('.item-to-add').querySelector('.item-sale-value');
         const val = parseFloat(internalValueInput.value);
         if (!isNaN(val) && val > 0) {
-            saleValueInput.value = (val * 1.50).toFixed(2);
+            saleValueInput.value = (val * PERCENTUAL_VENDA_PADRAO).toFixed(2); // Usa a variável aqui
         } else {
             saleValueInput.value = '';
         }
