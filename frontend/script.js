@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ADMIN_PASSWORD = 'admin';
 
     // Variável para a porcentagem de venda (1.50 = 50% de lucro sobre o valor interno)
-    const PERCENTUAL_VENDA_PADRAO = 1.50; // Altere este valor para mudar a porcentagem de venda
+    const PERCENTUAL_VENDA_PADRAO = 1.70; // Altere este valor para mudar a porcentagem de venda
 
     // --- Elementos do DOM ---
     const addItemForm = document.getElementById('add-item-form');
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displaySales();
     };
 
-    const clearAllHistory = () => {
+ const clearAllHistory = () => {
         const password = prompt('Para limpar SOMENTE o histórico de vendas, digite a senha de administrador:'); // Texto atualizado
         if (password === ADMIN_PASSWORD) {
             if (confirm('Tem certeza que deseja limpar SOMENTE o histórico de vendas? Esta ação NÃO PODE ser desfeita.')) { // Texto atualizado
@@ -435,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const saleValueInput = internalValueInput.closest('.item-to-add').querySelector('.item-sale-value');
         const val = parseFloat(internalValueInput.value);
         if (!isNaN(val) && val > 0) {
-            saleValueInput.value = (val * PERCENTUAL_VENDA_PADRAO).toFixed(2);
+            saleValueInput.value = (val * PERCENTUAL_VENDA_PADRAO).toFixed(2); // Usa a variável aqui
         } else {
             saleValueInput.value = '';
         }
