@@ -1,95 +1,236 @@
+/* Variáveis CSS para consistência */
+:root {
+    --color-primary-blue: #457b9d;
+    --color-primary-blue-dark: #1d3557;
+    --color-accent-green: #2a9d8f;
+    --color-accent-green-dark: #264653;
+    --color-danger-red: #e63946;
+    --color-danger-red-dark: #a8202b;
+    --color-background-light: #f0f2f5;
+    --color-white: #fff;
+    --color-text-dark: #333;
+    --color-text-light: #666;
+    --color-border-light: #ddd;
+    --color-shadow-light: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --border-radius-small: 4px;
+    --border-radius-medium: 8px;
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 20px;
+    --spacing-lg: 30px;
+}
+
+/* RESET BÁSICO */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ESTILOS BASE PARA DESKTOP */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
+    background-color: var(--color-background-light);
+    color: var(--color-text-dark);
     line-height: 1.6;
-    padding: 20px;
+    padding: var(--spacing-md);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Container para empilhar seções no desktop e mobile */
 .container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    max-width: 1400px;
-    margin: auto;
-    margin-bottom: 20px;
+    flex-direction: column; /* Sempre em coluna */
+    gap: var(--spacing-md);
+    max-width: 1400px; /* Largura máxima do conteúdo central */
+    margin: auto; /* Centraliza o container */
+    margin-bottom: var(--spacing-md);
 }
 
 .section {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    flex: 1;
-    min-width: 400px;
+    background: var(--color-white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-medium);
+    box-shadow: var(--color-shadow-light);
+    width: 100%; /* Ocupa 100% da largura do container */
+    max-width: 800px; /* Limita a largura máxima de cada seção para melhor leitura */
+    margin: 0 auto; /* Centraliza a seção dentro do container */
+    box-sizing: border-box;
 }
 
+/* Estilos para o cabeçalho da seção com o botão de toggle */
+.section-header-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md); /* Espaçamento entre o cabeçalho e o conteúdo */
+}
+
+.section-header-toggle h2 {
+    margin-bottom: 0; /* Remove a margem inferior padrão do h2 aqui */
+}
+
+/* Estilo para o botão de toggle da seção */
+.toggle-section-btn {
+    background-color: #6c757d; /* Cinza para os botões de toggle */
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.85em;
+    border-radius: var(--border-radius-small);
+    transition: background-color 0.2s;
+    width: auto; /* Permite que o botão seja compacto */
+    margin-top: 0; /* Remove margem superior padrão */
+    white-space: nowrap; /* Evita quebra de linha no texto do botão */
+}
+
+.toggle-section-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Estilo para esconder o conteúdo da seção */
+.section-content.hidden {
+    display: none;
+}
+
+
 h1, h2, h3 {
-    color: #1d3557;
+    color: var(--color-primary-blue-dark);
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: var(--spacing-lg);
     font-size: 2.5em;
 }
 
 hr {
     border: none;
     border-top: 1px solid #eee;
-    margin: 20px 0;
+    margin: var(--spacing-md) 0;
 }
 
 input[type="text"],
 input[type="number"],
+input[type="tel"],
 select {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--border-radius-small);
     box-sizing: border-box;
     font-size: 1em;
 }
 
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+select:focus {
+    border-color: var(--color-primary-blue);
+    box-shadow: 0 0 0 2px rgba(69, 123, 157, 0.2);
+    outline: none;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--color-primary-blue-dark);
+}
+
 .item-to-add, .sale-item {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
     align-items: center;
 }
 
+.item-to-add input, .sale-item input, .sale-item select {
+    flex: 1;
+    min-width: 120px;
+    margin-bottom: 0;
+}
+
+.item-to-add .item-name { flex-basis: 30%; min-width: 150px; }
+.item-to-add .item-quantity { flex-basis: 15%; min-width: 80px; }
+.item-to-add .item-internal-value,
+.item-to-add .item-sale-value { flex-basis: 25%; min-width: 100px; }
+
+
 button {
-    background-color: #457b9d;
-    color: #fff;
+    background-color: var(--color-primary-blue);
+    color: var(--color-white);
     border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
+    padding: var(--spacing-sm) 15px;
+    border-radius: var(--border-radius-small);
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: var(--spacing-sm);
     transition: background-color 0.2s;
     font-weight: bold;
     font-size: 1em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
 }
 
 button:hover {
-    background-color: #1d3557;
+    background-color: var(--color-primary-blue-dark);
 }
 
 #add-another-item-btn, #add-item-to-sale-btn {
-    background-color: #2a9d8f;
+    background-color: var(--color-accent-green);
 }
 
 #add-another-item-btn:hover, #add-item-to-sale-btn:hover {
-    background-color: #264653;
+    background-color: var(--color-accent-green-dark);
 }
 
+.delete-btn, .remove-sale-item-btn {
+    background-color: var(--color-danger-red);
+    padding: 5px 10px;
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.delete-btn:hover, .remove-sale-item-btn:hover {
+    background-color: var(--color-danger-red-dark);
+}
+
+.item-to-add .remove-add-item-btn {
+    background-color: transparent;
+    color: var(--color-danger-red);
+    border: 1px solid var(--color-danger-red);
+    padding: 5px 8px;
+    margin-top: 0;
+    min-width: unset;
+}
+
+.item-to-add .remove-add-item-btn:hover {
+    background-color: var(--color-danger-red);
+    color: var(--color-white);
+}
+
+.export-btn {
+    background-color: #ffc107;
+    color: var(--color-text-dark);
+}
+.export-btn:hover {
+    background-color: #e0a800;
+}
+
+
+/* TABELAS - ESTILOS DESKTOP */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: var(--spacing-md);
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-small);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 thead {
@@ -97,31 +238,34 @@ thead {
 }
 
 th, td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border-light);
     padding: 12px;
     text-align: left;
+    white-space: nowrap;
+}
+
+th {
+    font-weight: bold;
+    color: var(--color-primary-blue-dark);
+    font-size: 0.9em;
 }
 
 td input {
     margin-bottom: 0;
+    border: 1px solid #ddd;
+    background-color: #fefefe;
+    padding: 8px;
+    box-sizing: border-box;
+    width: 100%;
 }
 
-.delete-btn, .remove-sale-item-btn {
-    background-color: #e63946;
-    padding: 5px 10px;
-    margin: 0;
-}
-
-.delete-btn:hover, .remove-sale-item-btn:hover {
-    background-color: #a8202b;
-}
-
+/* RESUMO DA VENDA */
 #sale-summary {
-    margin-top: 20px;
+    margin-top: var(--spacing-md);
     padding: 15px;
     background-color: #e3f2fd;
-    border-left: 5px solid #457b9d;
-    border-radius: 4px;
+    border-left: 5px solid var(--color-primary-blue);
+    border-radius: var(--border-radius-small);
 }
 
 #sale-summary p {
@@ -131,44 +275,76 @@ td input {
 
 #sale-summary span {
     font-weight: bold;
+    color: var(--color-primary-blue-dark);
 }
 
+/* SEÇÃO FULL-WIDTH (Histórico) */
 .section-full-width {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    flex-basis: 100%;
+    background: var(--color-white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-medium);
+    box-shadow: var(--color-shadow-light);
     max-width: 1400px;
-    margin: auto;
+    margin: var(--spacing-md) auto;
 }
 
-#sales-grand-total {
-    background-color: #1d3557;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 6px;
-    text-align: center;
-    margin-bottom: 20px;
+/* Cards de Resumo Financeiro (Faturamento/Lucro) */
+#financial-summary-cards {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-around;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
     flex-wrap: wrap;
-    gap: 15px;
 }
 
-#sales-grand-total p {
-    margin: 0;
+.summary-card {
+    background-color: #e6ffe6;
+    border-left: 6px solid #4CAF50;
+    border-radius: var(--border-radius-small);
+    padding: var(--spacing-md);
+    flex: 1;
+    min-width: 250px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.summary-card:first-child {
+    background-color: #fff3e0;
+    border-left-color: #ff9800;
+}
+
+.summary-card h3 {
+    color: var(--color-primary-blue-dark);
+    margin-bottom: var(--spacing-sm);
     font-size: 1.2em;
-    font-weight: bold;
-    flex-grow: 1;
-    text-align: left;
 }
 
-#sales-grand-total button {
+.summary-card p {
     margin: 0;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #0d2840;
 }
 
+/* Botões de Ações no Histórico */
+.actions-history {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Contêiner para o botão "Exportar Vendas" no final */
+.export-sales-bottom {
+    text-align: center;
+    margin-top: var(--spacing-md);
+}
+.export-sales-bottom button {
+    width: auto; /* Ajusta o tamanho do botão */
+}
+
+
+/* Cards de Venda (Histórico de Vendas) */
 #sales-history-container {
     display: flex;
     flex-direction: column;
@@ -176,21 +352,21 @@ td input {
 }
 
 .sale-card {
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border-light);
     border-radius: 6px;
     overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-/* ALTERAÇÃO AQUI: Ajustes no cabeçalho do card para o nome do cliente */
 .sale-card-header {
     background-color: #f2f2f2;
-    padding: 10px 15px;
+    padding: var(--spacing-sm) 15px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start; /* Alinhado ao topo para nomes grandes */
+    align-items: flex-start;
     flex-wrap: wrap;
-    gap: 10px;
-    border-bottom: 1px solid #ddd;
+    gap: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .sale-card-header .info-venda {
@@ -206,25 +382,25 @@ td input {
 
 .sale-card-header .info-venda .sale-id {
     font-size: 0.8em;
-    color: #666;
+    color: var(--color-text-light);
 }
 
 .sale-card-header .sale-date {
     font-size: 0.9em;
-    color: #333;
+    color: var(--color-text-dark);
     white-space: nowrap;
     align-self: center;
 }
 
 .sale-card-footer {
     background-color: #f2f2f2;
-    padding: 10px 15px;
+    padding: var(--spacing-sm) 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
-    border-top: 1px solid #ddd;
+    gap: var(--spacing-sm);
+    border-top: 1px solid var(--color-border-light);
     font-size: 0.9em;
 }
 
@@ -235,7 +411,8 @@ td input {
 .sale-card-body p {
     margin-top: 0;
     font-weight: bold;
-    color: #333;
+    color: var(--color-text-dark);
+    margin-bottom: 8px;
 }
 
 .sale-card-body ul {
@@ -250,84 +427,233 @@ td input {
 .sale-card-body li {
     background-color: #fafafa;
     padding: 8px;
-    border-radius: 4px;
+    border-radius: var(--border-radius-small);
     border: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 0.9em;
 }
 
-/* --- Estilos Responsivos --- */
-@media (max-width: 768px) {
+
+/* --- MEDIA QUERIES PARA CELULAR (APLICAR SÓ PARA TELAS MENORES) --- */
+
+@media (max-width: 992px) { /* Este breakpoint agora foca em tablets e celulares */
     body {
-        padding: 10px;
+        padding: 10px; /* Reduz padding geral para telas menores */
     }
 
     h1 {
-        font-size: 1.8em;
+        font-size: 2em; /* Títulos menores no celular */
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
-    
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    h3 {
+        font-size: 1.1em;
+    }
+
     .container {
-        flex-direction: column;
+        flex-direction: column; /* Continua em coluna para telas menores */
+        align-items: center;
+        gap: 15px;
     }
 
     .section {
-        min-width: auto;
+        width: 100%; /* Ocupa toda a largura do container */
+        max-width: 95%; /* Pequena margem para evitar bordas grudadas */
+        padding: 15px;
+        margin: 0; /* Remove a centralização para ocupar toda a largura */
     }
 
-    table, thead, tbody, th, td, tr {
-        display: block;
-    }
-
-    thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
-
-    tr {
-        border: 1px solid #ccc;
-        border-radius: 6px;
+    input[type="text"],
+    input[type="number"],
+    input[type="tel"],
+    select {
+        padding: 10px 12px;
+        font-size: 0.95em;
         margin-bottom: 10px;
     }
 
-    td {
-        border: none;
-        border-bottom: 1px solid #eee;
-        position: relative;
-        padding-left: 50%;
-        text-align: right;
+    .form-group label {
+        margin-bottom: 5px;
     }
 
-    td:before {
-        position: absolute;
-        top: 50%;
-        left: 10px;
-        transform: translateY(-50%);
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-        content: attr(data-label);
-        font-weight: bold;
-        text-align: left;
-    }
-
-    td:last-child {
-        border-bottom: 0;
-    }
-
-    td input {
-        text-align: right;
-    }
-
-    .delete-btn {
+    button {
+        padding: 10px 15px;
+        font-size: 1em;
+        margin-top: 8px;
         width: 100%;
-        box-sizing: border-box;
+        justify-content: center;
     }
     
-    #sales-grand-total {
+    .remove-add-item-btn, .remove-sale-item-btn {
+        width: 100%;
+        padding: 8px 10px;
+    }
+
+    .item-to-add, .sale-item {
         flex-direction: column;
         align-items: stretch;
-        text-align: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding: 10px;
     }
-    #sales-grand-total p {
+
+    .item-to-add input, .sale-item input, .sale-item select {
+        min-width: unset;
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    /* TABELAS RESPONSIVAS PARA CELULAR */
+    table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: normal; /* Permite a quebra de texto */
+    }
+
+    thead {
+        display: none;
+    }
+
+    tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid var(--color-border-light);
+        border-radius: var(--border-radius-small);
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        padding: 10px;
+        background-color: var(--color-white);
+    }
+
+    td {
+        display: block;
+        border: none;
+        padding: 8px 0;
+        text-align: left;
+        white-space: normal;
+        min-width: unset;
+    }
+
+    td::before {
+        content: attr(data-label) ": ";
+        font-weight: bold;
+        color: var(--color-primary-blue-dark);
+        display: inline-block;
+        width: 120px;
+        padding-right: 10px;
+        vertical-align: middle;
+    }
+    
+    td input {
+        display: inline-block;
+        width: calc(100% - 130px);
+        vertical-align: middle;
+        padding: 6px 8px;
+        font-size: 0.9em;
+        text-align: left;
+    }
+    
+    td[data-label="Ações"] {
         text-align: center;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+    }
+    td[data-label="Ações"] button {
+        width: auto;
+        display: inline-flex;
+        margin: 5px;
+        font-size: 0.9em;
+        padding: 6px 10px;
+    }
+
+    #financial-summary-cards {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .summary-card {
+        min-width: unset;
+        width: 100%;
+        padding: 15px;
+    }
+
+    .summary-card p {
+        font-size: 1.6em;
+    }
+
+    .actions-history {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .actions-history button {
+        width: 100%;
+    }
+
+    .sale-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        padding: 10px 15px;
+    }
+    .sale-card-header .sale-date {
+        text-align: left;
+        width: 100%;
+    }
+    .sale-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        padding: 10px 15px;
+    }
+}
+
+/* Telas muito pequenas (ex: largura máxima 480px) */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+    }
+    h2 {
+        font-size: 1.3em;
+    }
+    h3 {
+        font-size: 1em;
+    }
+    body {
+        padding: 5px;
+    }
+    .section {
+        padding: 10px;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="tel"],
+    select,
+    button {
+        font-size: 0.9em;
+        padding: 8px 10px;
+    }
+    .summary-card h3 {
+        font-size: 0.9em;
+    }
+    .summary-card p {
+        font-size: 1.3em;
+    }
+    td::before {
+        width: 90px;
+    }
+    td input {
+        width: calc(100% - 100px);
     }
 }
