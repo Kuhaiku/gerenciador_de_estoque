@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const CLIENTS_STORAGE_KEY = STORAGE_PREFIX + 'clients';
     const ADMIN_PASSWORD = 'admin';
 
-    // Variável para a porcentagem de venda (1.50 = 50% de lucro sobre o valor interno)
+    // Variável para a porcentagem de venda (1.30 = 30% de lucro sobre o valor interno)
     const PERCENTUAL_VENDA_PADRAO = 1.30; // Altere este valor para mudar a porcentagem de venda
 
     // --- Elementos do DOM ---
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displaySales();
     };
 
- const clearAllHistory = () => {
+    const clearAllHistory = () => {
         const password = prompt('Para limpar SOMENTE o histórico de vendas, digite a senha de administrador:'); // Texto atualizado
         if (password === ADMIN_PASSWORD) {
             if (confirm('Tem certeza que deseja limpar SOMENTE o histórico de vendas? Esta ação NÃO PODE ser desfeita.')) { // Texto atualizado
@@ -364,8 +364,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 data-internal-value="${item.internalValue.toFixed(2)}" 
                                 data-sale-value="${item.saleValue.toFixed(2)}"
                                 data-available-quantity="${item.quantity}">
-                                ${escapeHTML(item.name)} (Estoque: ${item.quantity})
-                            </option>`;
+                                    ${escapeHTML(item.name)} (Estoque: ${item.quantity})
+                                </option>`;
             }
         });
         selectElement.innerHTML = optionsHTML;
@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!selectedItemOption || !selectedItemOption.value) return null;
 
             const itemId = selectedItemOption.value;
-            const selectedItem = availableItems.find(item => item.id == itemId);
+            const selectedItem = availableItems.find(item => item.id === soldItem.id);
 
             if (!selectedItem || isNaN(quantitySold) || quantitySold <= 0) {
                 return null;
