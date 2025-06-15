@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ADMIN_PASSWORD = 'admin';
 
     // Variável para a porcentagem de venda (1.50 = 50% de lucro sobre o valor interno)
-    const PERCENTUAL_VENDA_PADRAO = 1.50; // Altere este valor para mudar a porcentagem de venda
+    const PERCENTUAL_VENDA_PADRAO = 1.30; // Altere este valor para mudar a porcentagem de venda
 
     // --- Elementos do DOM ---
     const addItemForm = document.getElementById('add-item-form');
