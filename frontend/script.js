@@ -421,12 +421,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 removeBtn.style.display = 'none'; // Esconde se for o único item
             }
 
-            const internalValueInput = initialItemDiv.querySelector('.item-internal-value');
-            const saleValueInput = initialItemDiv.querySelector('.item-sale-value');
-            if (internalValueInput && saleValueInput) {
-                internalValueInput.removeEventListener('input', updateSaleValue); // Remove para evitar duplicidade
-                internalValueInput.addEventListener('input', updateSaleValue);
-            }
+            // Remove e re-adiciona listeners para garantir que todos os inputs de valor interno sejam atualizados
+            document.querySelectorAll('.item-internal-value').forEach(input => {
+                input.removeEventListener('input', updateSaleValue);
+                input.addEventListener('input', updateSaleValue);
+            });
         }
     };
 
@@ -486,6 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         itemsToAddContainer.appendChild(newItemDiv);
 
+        // Adiciona o listener imediatamente ao novo input de valor interno
         const internalValueInput = newItemDiv.querySelector('.item-internal-value');
         internalValueInput.addEventListener('input', updateSaleValue);
 
@@ -733,7 +733,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!selectedItemOption || !selectedItemOption.value) return null;
 
             const itemId = selectedItemOption.value;
-            const selectedItem = availableItems.find(item => item.id === soldItem.id);
+            // Corrigido para usar "itemId" para encontrar o item correto
+            const selectedItem = availableItems.find(item => item.id == itemId); 
 
             if (!selectedItem || isNaN(quantitySold) || quantitySold <= 0) {
                 return null;
@@ -865,7 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchItems();
     fetchClients();
     fetchSales();
-    handleInitialAddItemInput(); // Chama para configurar o botão 'X' inicial
+    handleInitialAddItemInput(); // Chama para configurar os listeners para todos os inputs de valor interno
     // Esconde o input de cliente anônimo no carregamento inicial, caso não esteja já configurado
     if (saleClientSelect.value !== 'cliente-sem-cadastro') {
         saleClientNameInputAnonymous.style.display = 'block';
